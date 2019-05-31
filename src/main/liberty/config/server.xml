@@ -1,0 +1,12 @@
+<server description="Sample Servlet server">
+    <featureManager>
+        <feature>servlet-4.0</feature>
+        <feature>microProfile-2.0</feature> 
+        <feature>jaxrs-2.1</feature>
+        <feature>jsonp-1.1</feature>
+    </featureManager>
+
+    <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}" id="defaultHttpEndpoint"  host="*" />
+
+    <webApplication id="GradleSample" location="GradleSample.war" contextRoot="${app.context.root}" />
+</server>
