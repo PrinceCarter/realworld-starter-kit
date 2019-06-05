@@ -1,0 +1,38 @@
+<server description="Sample Liberty server">
+
+  <featureManager>
+    <feature>jaxrs-2.1</feature>
+    <feature>jsonp-1.1</feature>
+    <feature>cdi-2.0</feature>
+    <feature>jpa-2.2</feature>
+  </featureManager>
+
+  <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}"
+    id="defaultHttpEndpoint" host="*" />
+
+  <application location="backendServices.war" type="war" context-root="/">
+  </application>
+
+  <!-- Derby Library Configuration -->    
+  <library id="derbyJDBCLib">
+      <fileset dir="${shared.resource.dir}" includes="derby*.jar"/>
+  </library>
+
+  <!-- Datasource Configuration -->
+<!--   <dataSource id="eventjpadatasource"
+              jndiName="jdbc/eventjpadatasource">
+      <jdbcDriver libraryRef="derbyJDBCLib" />
+      <properties.derby.embedded databaseName="EventDB" createDatabase="create"/>
+  </dataSource> -->
+  
+  <oauthProvider id="ClusterOAuthProvider" >
+    <databaseStore dataSourceRef="OAuth2DataSource" />
+  </oauthProvider>
+  <dataSource id="OAuth2DataSource" jndiName="jdbc/OAuth2DB">
+	  <jdbcDriver libraryRef="DerbyLib" />
+	  <properties.derby.embedded
+	     databaseName="${server.config.dir}/db/derby/OAuth20DB"
+	     createDatabase="create" />
+  </dataSource>
+
+</server>
