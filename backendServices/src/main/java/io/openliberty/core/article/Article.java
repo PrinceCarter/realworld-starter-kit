@@ -1,0 +1,118 @@
+package io.openliberty.core.article;
+
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+import org.eclipse.persistence.jpa.jpql.parser.DateTime;
+
+
+@Entity
+@Table(name = "Articles")
+@NamedQuery(name = "Articles.findBySlug", query = "SELECT a FROM Article a WHERE a.slug = :slug")
+@NamedQuery(name = "Articles.findUserFeed", query = "SELECT a FROM Article a WHERE a.userID = :userID")
+public class Article {
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @Column(name = "id")
+	private String id;
+    
+    @Column(name = "userID")
+	private String userID;
+    
+    @Column(name = "slug")
+	private String slug;
+    
+    @Column(name = "title")
+	private String title;
+    
+    @Column(name = "description")
+	private String description;
+    
+    @Column(name = "body")
+	private String body;
+    
+    @Column(name = "tags")
+	private List<Tag> tags;
+    
+    @Column(name = "createdAt")
+	private LocalTime createdAt;
+    
+    @Column(name = "updatedAt")
+	private LocalTime updatedAt;
+	
+    public Article() {
+    	
+    }
+	
+    public Article(String title, String description, String body, String userId) {
+        this.id = UUID.randomUUID().toString();
+        this.slug = toSlug(title);
+        this.title = title;
+        this.description = description;
+        this.body = body;
+//        this.tags = Arrays.stream(tagList).collect(Collectors.toSet()).stream().map(Tag::new).collect(Collectors.toList());
+        this.userID = userId;
+        this.createdAt = LocalTime.now();
+        this.updatedAt = createdAt;
+    }
+	
+//    public Article(String title, String description, String body, String[] tagList, String userId) {
+//        this(title, description, body, tagList, userId, new DateTime());
+//    }
+
+
+
+    public void update(String title, String description, String body) {
+        if (!"".equals(title)) {
+            this.title = title;
+            this.slug = toSlug(title);
+        }
+        if (!"".equals(description)) {
+            this.description = description;
+        }
+        if (!"".equals(body)) {
+            this.body = body;
+        }
+		this.updatedAt = LocalTime.now();
+    }
+
+    private String toSlug(String title) {
+        return title.toLowerCase().replaceAll("[\\&|[\\uFE30-\\uFFA0]|\\’|\\”|\\s\\?\\,\\.]+", "-");
+    }
+    
+    public String getID() {
+    	return id;
+    }
+
+	public String getTitle() {
+		return title;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public String getBody() {
+		return body;
+	}
+	
+	public String getUserID() {
+		return userID;
+	}
+	
+	public String getTagList() {
+		return tags.toString();
+	}
+}

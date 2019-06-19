@@ -10,12 +10,17 @@
  *     IBM Corporation - Initial implementation
  *******************************************************************************/
 // end::copyright[]
-package io.openliberty.api.resources;
+package io.openliberty;
 
+import javax.annotation.security.DeclareRoles;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.eclipse.microprofile.auth.LoginConfig;
+
 @ApplicationPath("/")
+@LoginConfig(authMethod = "MP-JWT")
+@DeclareRoles({"USER", "ADMIN"})
 public class UserApplication extends Application {
 
 }

@@ -1,4 +1,4 @@
-package io.openliberty.api.models;
+package io.openliberty.core.user;
 
 
 import java.io.Serializable;
@@ -9,15 +9,22 @@ import javax.persistence.Table;
 import javax.persistence.NamedQuery;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.json.JsonValue;
 import javax.persistence.Column;
 import javax.persistence.GenerationType;
+
+import org.eclipse.microprofile.jwt.Claim;
 
 @Entity
 @Table(name = "Users")
 @NamedQuery(name = "Users.findAllUsers", query = "SELECT u FROM User u")
 @NamedQuery(name = "Users.findUser", 	 query = "SELECT u FROM User u WHERE u.username = :username")
+@NamedQuery(name = "Users.findByUsername",  query = "SELECT u FROM User u WHERE u.username = :username")
 @NamedQuery(name = "Users.findByEmail",  query = "SELECT u FROM User u WHERE u.email = :email")
+@RequestScoped
+
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +33,8 @@ public class User implements Serializable {
     @Column(name = "userID")
     private String userID;
 
+    @Inject
+    @Claim("email")
     @Column(name = "userEmail")
     private String email;
     		

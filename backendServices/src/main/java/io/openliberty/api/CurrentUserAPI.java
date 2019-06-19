@@ -1,4 +1,4 @@
-package io.openliberty.api.resources;
+package io.openliberty.api;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -12,8 +12,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.openliberty.api.dao.UserDAO;
-import io.openliberty.api.models.User;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import javax.annotation.security.RolesAllowed;
+
+import io.openliberty.UserDAO;
+import io.openliberty.core.user.User;
 
 @RequestScoped
 @Path("user")
@@ -22,17 +26,23 @@ public class CurrentUserAPI {
     @Inject
     private UserDAO userDAO;
     
-//    @GET
-//    public Response currentUser() {
-//    	return 
-//    }
+//    @Inject
+//    private JsonWebToken jwtPrincipal;
 //    
+//    @GET
+//    @RolesAllowed({ "admin", "user" })
+//    @Path("/username")
+//    public Response currentUser() {
+//    	return Response.ok(this.jwtPrincipal.getName()).build();
+//    }
+    
 
     /**
      * This method updates a new user from the submitted data (email, username, password, bio and
      * image) by the user.
      */
     @PUT
+    @RolesAllowed({ "admin", "user" })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Transactional
     public Response updateUser(@PathParam("userID") String userID, @FormParam("email") String email, @FormParam("username") String username,

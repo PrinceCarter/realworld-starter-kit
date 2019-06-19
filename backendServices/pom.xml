@@ -17,6 +17,11 @@
         <!--Open Liberty features -->
         <dependency>
             <groupId>io.openliberty.features</groupId>
+            <artifactId>mpJwt-1.1</artifactId>
+            <type>esa</type>
+        </dependency>
+		<dependency>
+            <groupId>io.openliberty.features</groupId>
             <artifactId>jaxrs-2.1</artifactId>
             <type>esa</type>
         </dependency>
@@ -40,6 +45,11 @@
             <artifactId>jpa-2.2</artifactId>
             <type>esa</type>
         </dependency>
+	    <dependency>
+	      <groupId>com.nimbusds</groupId>
+	      <artifactId>nimbus-jose-jwt</artifactId>
+	      <version>6.7</version>
+	    </dependency>
         <!-- For tests -->
         <dependency>
             <groupId>junit</groupId>
@@ -81,6 +91,12 @@
             <version>10.14.2.0</version>
             <scope>test</scope>
         </dependency>
+		<dependency>
+		  <groupId>org.eclipse.microprofile</groupId>
+		  <artifactId>microprofile</artifactId>
+		  <version>2.0.1</version>
+		  <type>pom</type>
+		</dependency>
     </dependencies>
     <build>
         <plugins>        

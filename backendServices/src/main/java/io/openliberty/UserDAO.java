@@ -1,12 +1,15 @@
-package io.openliberty.api.dao;
+package io.openliberty;
 
 import java.util.List;
+import java.util.logging.ConsoleHandler;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import io.openliberty.api.models.User;
+import io.openliberty.core.user.User;
 
 import javax.enterprise.context.RequestScoped;
+
 
 @RequestScoped
 public class UserDAO {
@@ -17,8 +20,17 @@ public class UserDAO {
 
     public void createUser(User user) {
         em.persist(user);
-        em.toString();
     }
+    
+    public void createRelationship(FollowRelationship followRelationship) {
+    	em.persist(followRelationship);
+    }
+    
+//    public List<FollowRelationship> findRelationship(String userID, String otherID){
+//    	return em.createNamedQuery("Users.findRelationship", User.class)
+//    			 .setParameter("userID", userID)
+//    			 .getResultList();
+//    }
     
     public User readUser(String userID) {
         return em.find(User.class, userID);
@@ -32,9 +44,14 @@ public class UserDAO {
         em.remove(user);
     }
     
+    public User findByUsername(String username) {
+    	return em.createNamedQuery("Users.findUser", User.class)
+                 .setParameter("username", username).getSingleResult();
+    }
+    
     public User findByEmail(String email) {
     	return em.createNamedQuery("Users.findByEmail", User.class)
-                .setParameter("email", email).getSingleResult();
+                 .setParameter("email", email).getSingleResult();
     }
 
     public List<User> findAllUsers() {
@@ -43,6 +60,9 @@ public class UserDAO {
 
     public List<User> findUser(String username) {
         return em.createNamedQuery("Users.findUser", User.class)
-            .setParameter("username", username).getResultList();
+                 .setParameter("username", username).getResultList();
     }
+    
+
+    
 }

@@ -23,7 +23,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
-import io.openliberty.api.models.User;
+import io.openliberty.core.user.User;
 
 public abstract class UserTest {
 
