@@ -67,6 +67,11 @@
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
         </dependency>
+        <dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20151123</version>
+		</dependency>
         <!-- Support for JDK 9 and above -->   
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -185,9 +190,6 @@
                             <goal>integration-test</goal>
                         </goals>
                         <configuration>
-                            <includes>
-                                <include>**/it/**</include>
-                            </includes>
                             <systemPropertyVariables>
                               <backend.http.port>${backend.service.http.port}</backend.http.port>
                             </systemPropertyVariables>

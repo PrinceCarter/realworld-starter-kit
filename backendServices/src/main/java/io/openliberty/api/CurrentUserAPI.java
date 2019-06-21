@@ -14,9 +14,13 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.security.RolesAllowed;
 
 import io.openliberty.UserDAO;
+import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
 
 @RequestScoped
@@ -26,13 +30,18 @@ public class CurrentUserAPI {
     @Inject
     private UserDAO userDAO;
     
-//    @Inject
-//    private JsonWebToken jwtPrincipal;
-//    
 //    @GET
-//    @RolesAllowed({ "admin", "user" })
-//    @Path("/username")
+//    @Path("username")
 //    public Response currentUser() {
+//		AuthUser authUser = new AuthUser(user, jwtTokenString);
+//		
+//		builder.add("email", authUser.getEmail())
+//			   .add("username", authUser.getUsername())
+//		   		   .add("bio", authUser.getBio())
+//		   		   .add("token", authUser.getToken())
+//		   		   .add("image", user.getImage());
+//    	
+//    	
 //    	return Response.ok(this.jwtPrincipal.getName()).build();
 //    }
     
@@ -82,4 +91,11 @@ public class CurrentUserAPI {
         userDAO.updateUser(prevUser);
         return Response.status(Response.Status.NO_CONTENT).build(); 
     }
+    
+    private Map<String, Object> userResponse(AuthUser userWithToken) {
+        return new HashMap<String, Object>() {{
+            put("user", userWithToken);
+        }};
+    }
+    
 }

@@ -16,9 +16,11 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -33,7 +35,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.SecurityContext;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.Claim;
@@ -43,11 +48,16 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import com.ibm.websphere.security.jwt.*;
 
 import io.openliberty.UserDAO;
+import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
 
+import java.io.BufferedReader;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import org.json.JSONObject;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -60,10 +70,7 @@ public class UsersAPI {
 
     @Inject
     private UserDAO userDAO;
-    
-    @Inject
-   	private JsonWebToken jwtToken;
-    
+
     @Inject
     @Claim(standard = Claims.iss)
     private String issuer;
@@ -77,75 +84,58 @@ public class UsersAPI {
      * image) by the user.
      */
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response createNewUser(@FormParam("email") String email, @FormParam("username") String username,
-        @FormParam("password") String password, @FormParam("bio") String bio, @FormParam("image") String image) {
-    	
-        User newUser = new User(email, username, password, bio, image);
-        
-        if(!userDAO.findUser(username).isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Username already exists").build();
-        }
-        
-        userDAO.createUser(newUser);
-        return Response.status(Response.Status.NO_CONTENT).build(); 
-    }
-    
+    public Response createNewUser(String requestBody) {
 
+    	JSONObject obj = new JSONObject(requestBody);
+    	JSONObject user = obj.getJSONObject("user");
+        User newUser = new User(user.getString("email"), user.getString("username"), user.getString("password"), "", "");   
+        userDAO.createUser(newUser);
+        return Response.status(Response.Status.CREATED).entity(userResponse(new AuthUser(newUser, getToken(newUser)))).build();
+        
+    }
     
     @POST
     @Path("login")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response loginUser(@FormParam("email") String email, @FormParam("password") String password) {    
-    	User user = userDAO.findByEmail(email);
-    	if (user != null && password.equals(user.getPassword())) { 		
-    		JsonObjectBuilder builder = Json.createObjectBuilder();
-    		builder.add("email", email);
-    		builder.add("password", password);
-    		try {
-        		JwtBuilder jwtBuilder = JwtBuilder.create();
-        		customEntry = "www.bs.com";
-        		jwtBuilder.subject(email);
-        		JwtToken goToken = jwtBuilder.buildJwt();
-        		String jwtTokenString = goToken.compact();
-        		JwtConsumer jwtConsumer = new JwtConsumer();	
-        		System.out.println("This is the JWT: " + jwtTokenString);
-        		System.out.println("This is the data contained in the JWT: " + goToken.getClaims().getAllClaims());
-    		} catch(Exception e) {
-    			System.out.println("Something went wrong! " + e);
-    		}	
-    		return Response.status(Response.Status.ACCEPTED)
-    				.entity("Successfully Logged In!").build();
+    public Response loginUser(String requestBody) {  
+    	JSONObject obj = new JSONObject(requestBody);
+    	JSONObject user = obj.getJSONObject("user");
+    	User loginUser = userDAO.findByEmail(user.getString("email"));
+    	if (loginUser != null && user.getString("password").equals(loginUser.getPassword())) {
+    		return Response.status(Response.Status.CREATED).entity(userResponse(new AuthUser(loginUser, getToken(loginUser)))).build();
     	} else {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Invalid Email or password").build();
+    		return Response.status(Response.Status.NOT_FOUND).entity("User does not exist!").build();
     	}
     	
+    } 
+    
+    private String getToken(User loginUser) {
+		try {
+    		JwtBuilder jwtBuilder = JwtBuilder.create();
+    		customEntry = "www.bs.com";
+    		jwtBuilder.subject(loginUser.getEmail());
+    		JwtToken goToken = jwtBuilder.buildJwt();
+    		System.out.println("AUTHHHH: " + goToken.getHeader("Authorization"));
+    		String jwtTokenString = goToken.compact();
+    		return jwtTokenString;
+		} catch(Exception e) {
+			System.out.println("Something went wrong! " + e);
+			return null;
+		}
+		
     }
     
-
-//    jwtBuilder.subject("tom@op.com").claim(Claims.AUDIENCE, "https://acme.com/rs").claim("iss","https://sso.com/ibm/op" ).claim("scope", "impersonator monitor").claim("uid", "hasys123haksiqws");
-//    JwtToken goToken = jwtBuilder.buildJwt();
-
-//    /**
-//     * This method deletes a specific existing/stored user
-//     */
-//    @DELETE
-//    @Path("{userID}")
-//    @Transactional
-//    public Response deleteUser(@PathParam("userID") String userID) {
-//        User user = userDAO.readUser(userID);
-//        if(user == null) {
-//            return Response.status(Response.Status.NOT_FOUND)
-//                           .entity("User does not exist").build();
-//        }
-//        userDAO.deleteUser(user);
-//        return Response.status(Response.Status.NO_CONTENT).build();
-//    }
-
+    private Map<String, Object> userResponse(AuthUser authUser) {
+        return new HashMap<String, Object>() {{
+            put("user", authUser);
+        }};
+    }
+    
     /**
      * This method returns a specific existing/stored user in Json format
      */
@@ -175,10 +165,6 @@ public class UsersAPI {
     public JsonArray getUsers() {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonArrayBuilder finalArray = Json.createArrayBuilder();
-        
-
-		
-        
         for (User user : userDAO.findAllUsers()) {
         	builder.add("ID", user.getID())
         		   .add("Username", user.getUsername())
@@ -189,35 +175,5 @@ public class UsersAPI {
         }
         return finalArray.build();
     }
-    
-//    @GET
-//    @Path("permit-all")
-//    @PermitAll 
-//    @Produces(MediaType.TEXT_PLAIN)
-//    public String hello(@Context SecurityContext ctx) { // 
-//
-//        Principal caller =  ctx.getUserPrincipal(); 
-//
-//        String name = caller == null ? "anonymous" : caller.getName();
-//        boolean hasJWT = callerPrincipal != null;
-//        String helloReply = String.format("hello + %s, isSecure: %s, authScheme: %s, hasJWT: %s", name, ctx.isSecure(), ctx.getAuthenticationScheme(), hasJWT);
-//        return helloReply; // 
-//
-//    }
-//    
-//
-//    @GET()
-//    @Path("roles-allowed")
-//    @RolesAllowed({"Echoer", "Subscriber"}) 
-//    @Produces(MediaType.TEXT_PLAIN)
-//    public String helloRolesAllowed(@Context SecurityContext ctx) {
-//        Principal caller =  ctx.getUserPrincipal();
-//        String name = caller == null ? "anonymous" : caller.getName();
-//        boolean hasJWT = callerPrincipal != null;
-//        String helloReply = String.format("hello + %s, isSecure: %s, authScheme: %s, hasJWT: %s", name, ctx.isSecure(), ctx.getAuthenticationScheme(), hasJWT);
-//        return helloReply;
-//    }
-//    
-//    
 
 }

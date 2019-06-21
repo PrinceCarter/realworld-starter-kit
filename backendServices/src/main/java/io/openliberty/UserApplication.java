@@ -20,7 +20,7 @@ import org.eclipse.microprofile.auth.LoginConfig;
 
 @ApplicationPath("/")
 @LoginConfig(authMethod = "MP-JWT")
-@DeclareRoles({"USER", "ADMIN"})
+@DeclareRoles({"user", "admin"})
 public class UserApplication extends Application {
 
 }

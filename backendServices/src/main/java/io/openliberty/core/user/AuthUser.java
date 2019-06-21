@@ -1,19 +1,17 @@
 package io.openliberty.core.user;
 
-
 import java.io.Serializable;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.NamedQuery;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.json.JsonValue;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 import org.eclipse.microprofile.jwt.Claim;
 
@@ -25,10 +23,9 @@ import org.eclipse.microprofile.jwt.Claim;
 @NamedQuery(name = "Users.findByEmail",  query = "SELECT u FROM User u WHERE u.email = :email")
 @RequestScoped
 
-public class User implements Serializable {
+public class AuthUser implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    
     @Id
     @Column(name = "userID")
     private String userID;
@@ -49,29 +46,20 @@ public class User implements Serializable {
     
     @Column(name = "image")
     private String image;
-
-    public User() {
-    }
     
-    public User(String email, String username, String password) {
-    	this.userID = UUID.randomUUID().toString();
-    	this.email = email;
-        this.username = username;
-        this.password = password;
+    @Column(name = "token")
+    private String token;
+
+    public AuthUser() {
     }
 
-
-    public User(String email, String username, String password, String bio, String image) {
-    	this.userID = UUID.randomUUID().toString();
-    	this.email = email;
-        this.username = username;
-        this.password = password;
-        this.bio = bio;
-        this.image = image;
-    }
-
-    public String getID() {
-        return userID;
+    public AuthUser(User user, String token) {
+    	this.email = user.getEmail();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.bio = user.getBio();
+        this.image = user.getImage();
+        this.token = token;
     }
     
     public String getBio() {
@@ -92,6 +80,10 @@ public class User implements Serializable {
     
 	public String getImage() {
 		return image;
+	}
+	
+	public String getToken() {
+		return token;
 	}
 
     public void setEmail(String email) {
@@ -116,7 +108,6 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User: [ID = "+ userID + ", Email = " + email + ", Username = " + username + ", Bio = " + bio + ", Image = " + image + "]";
+        return "User: [Email = " + email + ", Username = " + username + ", Bio = " + bio + ", Image = " + image + ", Token " + token + "]";
     }
-
 }
