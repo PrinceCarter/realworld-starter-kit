@@ -108,6 +108,6 @@ public class AuthUser implements Serializable {
 
     @Override
     public String toString() {
-        return "User: [Email = " + email + ", Username = " + username + ", Bio = " + bio + ", Image = " + image + ", Token " + token + "]";
+        return "User: [Email = " + email + ", Username = " + username + ", Bio = " + bio + ", Image = " + image + "]";
     }
 }

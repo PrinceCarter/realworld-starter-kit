@@ -52,13 +52,6 @@ public class User implements Serializable {
 
     public User() {
     }
-    
-    public User(String email, String username, String password) {
-    	this.userID = UUID.randomUUID().toString();
-    	this.email = email;
-        this.username = username;
-        this.password = password;
-    }
 
 
     public User(String email, String username, String password, String bio, String image) {
