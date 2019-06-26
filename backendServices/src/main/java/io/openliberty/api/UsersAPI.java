@@ -35,9 +35,8 @@ import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+
 
 import org.json.JSONObject;
 import javax.enterprise.context.RequestScoped;
@@ -92,7 +91,7 @@ public class UsersAPI {
 			String remoteUser = request.getRemoteUser();
 
 			System.out.println(remoteUser);
-			Set<String> roles = getRoles(request);
+			//Set<String> roles = getRoles(request);
 
 			// update session
 			if (remoteUser != null && remoteUser.equals(loginUser.getUsername())) {
@@ -132,21 +131,26 @@ public class UsersAPI {
 
 	}
 
-	private Set<String> getRoles(HttpServletRequest request) {
-		Set<String> roles = new HashSet<String>();
-		boolean isAdmin = request.isUserInRole("admin");
-		boolean isUser = request.isUserInRole("user");
-		if (isAdmin) {
-			roles.add("admin");
-		}
-		if (isUser) {
-			roles.add("user");
-		}
-		return roles;
-	}
+//	private Set<String> getRoles(HttpServletRequest request) {
+//		Set<String> roles = new HashSet<String>();
+//		boolean isAdmin = request.isUserInRole("admin");
+//		boolean isUser = request.isUserInRole("user");
+//		if (isAdmin) {
+//			roles.add("admin");
+//		}
+//		if (isUser) {
+//			roles.add("user");
+//		}
+//		return roles;
+//	}
 
 	private Map<String, Object> userResponse(AuthUser authUser) {
 		return new HashMap<String, Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			{
 				put("user", authUser);
 			}

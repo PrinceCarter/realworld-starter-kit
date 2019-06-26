@@ -1,6 +1,9 @@
 package io.openliberty.core.article;
 
 import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +22,7 @@ import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 
 @Entity
 @Table(name = "Articles")
+@NamedQuery(name = "Articles.findByID", query = "SELECT a FROM Article a WHERE a.id = :id")
 @NamedQuery(name = "Articles.findBySlug", query = "SELECT a FROM Article a WHERE a.slug = :slug")
 @NamedQuery(name = "Articles.findUserFeed", query = "SELECT a FROM Article a WHERE a.userID = :userID")
 public class Article {
@@ -47,32 +51,36 @@ public class Article {
 	private List<Tag> tags;
     
     @Column(name = "createdAt")
-	private LocalTime createdAt;
+	private String createdAt;
     
     @Column(name = "updatedAt")
-	private LocalTime updatedAt;
-	
+	private String updatedAt;
+    
+    @Column(name = "favorited")
+    private boolean favorited;
+    
+    @Column(name = "favoritesCount")
+    private int favoritesCount;
+
     public Article() {
     	
     }
+    
+    public Article(String title, String description, String body, String[] tagList, String userId) {
+    	this(title, description, body, tagList, userId, ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT ));
+    }
 	
-    public Article(String title, String description, String body, String userId) {
+    public Article(String title, String description, String body, String[] tagList, String userId, String createdAt) {
         this.id = UUID.randomUUID().toString();
         this.slug = toSlug(title);
         this.title = title;
         this.description = description;
         this.body = body;
-//        this.tags = Arrays.stream(tagList).collect(Collectors.toSet()).stream().map(Tag::new).collect(Collectors.toList());
+        this.tags = Arrays.stream(tagList).collect(Collectors.toSet()).stream().map(Tag::new).collect(Collectors.toList());
         this.userID = userId;
-        this.createdAt = LocalTime.now();
+        this.createdAt = ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT );
         this.updatedAt = createdAt;
     }
-	
-//    public Article(String title, String description, String body, String[] tagList, String userId) {
-//        this(title, description, body, tagList, userId, new DateTime());
-//    }
-
-
 
     public void update(String title, String description, String body) {
         if (!"".equals(title)) {
@@ -85,7 +93,7 @@ public class Article {
         if (!"".equals(body)) {
             this.body = body;
         }
-		this.updatedAt = LocalTime.now();
+		this.updatedAt = ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT );
     }
 
     private String toSlug(String title) {
@@ -112,7 +120,31 @@ public class Article {
 		return userID;
 	}
 	
-	public String getTagList() {
-		return tags.toString();
+	public List<Tag> getTagList() {
+		return tags;
+	}
+	
+	public String getSlug() {
+		return slug;
+	}
+	
+	public String getCreatedAt() {
+		return createdAt;
+	}
+	
+	public String getUpdatedAt() {
+		return updatedAt;
+	}
+	
+	public String getAuthor() {
+		return userID;
+	}
+	
+	public boolean isFavorited() {
+		return favorited;
+	}
+	
+	public int getFavoritesCount() {
+		return favoritesCount;
 	}
 }

@@ -20,10 +20,12 @@ public class ArticleDAO {
         em.persist(article);
     }
     
-//    public Article findByID(String articleID) {
-//    	
-//    }
-//    
+    public Article findByID(String articleID) {
+    	return em.createNamedQuery("Articles.findByID", Article.class)
+   			 .setParameter("id", articleID)
+   			 .getSingleResult();
+    }
+    
     public Article findBySlug(String slug) {
     	return em.createNamedQuery("Articles.findBySlug", Article.class)
     			 .setParameter("slug", slug)
@@ -34,9 +36,9 @@ public class ArticleDAO {
 //    	
 //    }
     
-    public List<Article> findUserFeed(String userID) {
+    public List<Article> findUserFeed(User user) {
     	return em.createNamedQuery("Articles.findUserFeed", Article.class)
-          .setParameter("userID", userID).getResultList();
+          .setParameter("userID", user.getID()).getResultList();
     }
 
 }
