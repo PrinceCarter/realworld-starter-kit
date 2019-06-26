@@ -1,7 +1,6 @@
 package io.openliberty;
 
 import java.util.List;
-import java.util.logging.ConsoleHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

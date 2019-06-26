@@ -1,17 +1,13 @@
 package io.openliberty.api;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,7 +21,6 @@ import org.json.JSONObject;
 import io.openliberty.ArticleDAO;
 import io.openliberty.UserDAO;
 import io.openliberty.core.article.Article;
-import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
 
 @RequestScoped
@@ -56,6 +51,11 @@ public class ArticlesAPI {
 										 user.getID().toString());
 		articleDAO.createArticle(newArticle);
 		return Response.status(Response.Status.OK).entity((new HashMap<String, Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			{
 				put("article", articleDAO.findByID(newArticle.getID()));
 			}
@@ -68,7 +68,7 @@ public class ArticlesAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response getFeed(String requestBody) {
-		return Response.ok(articleDAO.findUserFeed(userDAO.findByUsername(jwtToken.getName()))).build();
+		return Response.ok(articleResponse(articleDAO.findUserFeed(userDAO.findByUsername(jwtToken.getName())))).build();
 	}
 
 	// Set to QueryParams
@@ -84,6 +84,19 @@ public class ArticlesAPI {
 //		System.out.println(obj);
 
 		return Response.status(Response.Status.OK).entity(requestBody).build();
+	}
+	
+	private Map<String, Object> articleResponse(List <Article> articles) {
+		return new HashMap<String, Object>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				put("articles", articles);
+			}
+		};
 	}
 
 }

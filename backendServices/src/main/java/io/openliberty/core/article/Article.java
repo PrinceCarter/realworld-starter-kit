@@ -1,6 +1,5 @@
 package io.openliberty.core.article;
 
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,22 +8,22 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
-
 
 @Entity
 @Table(name = "Articles")
 @NamedQuery(name = "Articles.findByID", query = "SELECT a FROM Article a WHERE a.id = :id")
 @NamedQuery(name = "Articles.findBySlug", query = "SELECT a FROM Article a WHERE a.slug = :slug")
 @NamedQuery(name = "Articles.findUserFeed", query = "SELECT a FROM Article a WHERE a.userID = :userID")
+@RequestScoped
 public class Article {
 
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,7 +46,7 @@ public class Article {
     @Column(name = "body")
 	private String body;
     
-    @Column(name = "tags")
+    @JoinColumn(name = "tags")
 	private List<Tag> tags;
     
     @Column(name = "createdAt")
