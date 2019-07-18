@@ -18,13 +18,13 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.json.JSONObject;
 
-import io.openliberty.ArticleDAO;
-import io.openliberty.UserDAO;
+import io.openliberty.DAO.ArticleDAO;
+import io.openliberty.DAO.UserDAO;
 import io.openliberty.core.article.Article;
 import io.openliberty.core.user.User;
 
 @RequestScoped
-@Path("articles")
+@Path("/articles")
 public class ArticlesAPI {
 
 	@Inject
@@ -68,7 +68,10 @@ public class ArticlesAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response getFeed(String requestBody) {
-		return Response.ok(articleResponse(articleDAO.findUserFeed(userDAO.findByUsername(jwtToken.getName())))).build();
+		User user = userDAO.findByUsername(jwtToken.getName());
+		System.out.println(user);
+//		return Response.ok().build();
+		return Response.ok(articleResponse(articleDAO.findUserFeed(user))).build();
 	}
 
 	// Set to QueryParams

@@ -1,4 +1,4 @@
-package io.openliberty;
+package io.openliberty.DAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class ArticleDAO {
     
     public List<Article> findUserFeed(User user) {
     	return em.createNamedQuery("Articles.findUserFeed", Article.class)
-          .setParameter("userID", user.getID()).getResultList();
+    			 .setParameter("userID", user.getID()).getResultList();
     }
     
     public void remove(Article article) {

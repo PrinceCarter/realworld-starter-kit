@@ -10,7 +10,7 @@
  *     IBM Corporation - Initial implementation
  *******************************************************************************/
 // end::copyright[]
-package io.openliberty;
+package io.openliberty.DAO;
 
 import javax.annotation.security.DeclareRoles;
 import javax.ws.rs.ApplicationPath;

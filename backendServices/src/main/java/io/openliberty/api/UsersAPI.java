@@ -30,7 +30,7 @@ import org.eclipse.microprofile.jwt.Claims;
 
 import com.ibm.websphere.security.jwt.*;
 
-import io.openliberty.UserDAO;
+import io.openliberty.DAO.UserDAO;
 import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
 

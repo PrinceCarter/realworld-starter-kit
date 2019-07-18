@@ -1,4 +1,4 @@
-package io.openliberty;
+package io.openliberty.DAO;
 
 import java.util.List;
 
