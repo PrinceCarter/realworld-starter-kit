@@ -9,13 +9,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -46,8 +50,8 @@ public class Article {
     @Column(name = "body")
 	private String body;
     
-    @JoinColumn(name = "tags")
-	private List<Tag> tags;
+//    @JoinColumn(name = "tags")
+//	private List<Tag> tags;
     
     @Column(name = "createdAt")
 	private String createdAt;
@@ -75,7 +79,7 @@ public class Article {
         this.title = title;
         this.description = description;
         this.body = body;
-        this.tags = Arrays.stream(tagList).collect(Collectors.toSet()).stream().map(Tag::new).collect(Collectors.toList());
+        //this.tags = Arrays.stream(tagList).collect(Collectors.toSet()).stream().map(Tag::new).collect(Collectors.toList());
         this.userID = userId;
         this.createdAt = ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT );
         this.updatedAt = createdAt;
@@ -119,9 +123,9 @@ public class Article {
 		return userID;
 	}
 	
-	public List<Tag> getTagList() {
-		return tags;
-	}
+//	public List<Tag> getTagList() {
+//		return tags;
+//	}
 	
 	public String getSlug() {
 		return slug;

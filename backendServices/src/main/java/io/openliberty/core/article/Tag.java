@@ -4,12 +4,16 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import javax.enterprise.context.RequestScoped;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,9 +26,8 @@ public class Tag implements Serializable {
 	
 	@GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    @Column(name = "tagID")
     private String id;
-	
+
 	@Column(name = "name")
     private String name;
 	

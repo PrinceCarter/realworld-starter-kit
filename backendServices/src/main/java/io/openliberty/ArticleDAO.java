@@ -1,6 +1,7 @@
 package io.openliberty;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
@@ -38,6 +39,10 @@ public class ArticleDAO {
     public List<Article> findUserFeed(User user) {
     	return em.createNamedQuery("Articles.findUserFeed", Article.class)
           .setParameter("userID", user.getID()).getResultList();
+    }
+    
+    public void remove(Article article) {
+    	em.remove(article);
     }
 
 }
