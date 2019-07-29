@@ -1,12 +1,58 @@
-<server description="Sample Servlet server">
-    <featureManager>
-        <feature>servlet-4.0</feature>
-        <feature>microProfile-2.0</feature> 
-        <feature>jaxrs-2.1</feature>
-        <feature>jsonp-1.1</feature>
-    </featureManager>
+<server description="Sample Liberty server">
 
-    <httpEndpoint httpPort="${default.http.port}" httpsPort="${default.https.port}" id="defaultHttpEndpoint"  host="*" />
+	<featureManager>
+		<feature>jaxrs-2.1</feature>
+		<feature>jsonp-1.1</feature>
+		<feature>cdi-2.0</feature>
+		<feature>jpa-2.2</feature>
+		<feature>microProfile-2.0</feature>
+	</featureManager>
 
-    <webApplication id="GradleSample" location="GradleSample.war" contextRoot="${app.context.root}" />
+	<httpEndpoint httpPort="${default.http.port}"
+		httpsPort="${default.https.port}" id="defaultHttpEndpoint" />
+
+	<basicRegistry id="basic" realm="WebRealm">
+		<user name="prince" password="password" />  <!-- bobpwd -->
+		<user name="alice" password="{xor}PjM2PDovKDs=" />  <!-- alicepwd -->
+		<user name="carl" password="{xor}PD4tMy8oOw==" />   <!-- carlpwd -->
+
+		<group name="myAdmins">
+			<member name="prince" />
+		</group>
+
+		<group name="myUsers">
+			<member name="prince" />
+			<member name="alice" />
+			<member name="carl" />
+		</group>
+	</basicRegistry>
+
+	<application location="backendServices.war" type="war"
+		context-root="/">
+		<application-bnd>
+			<security-role name="admin">
+				<group name="myAdmins" />
+			</security-role>
+			<security-role name="user">
+				<group name="myUsers" />
+			</security-role>
+		</application-bnd>
+	</application>
+
+	<!-- Derby Library Configuration -->
+	<library id="derbyJDBCLib">
+		<fileset dir="${shared.resource.dir}" includes="derby*.jar" />
+	</library>
+
+	<!-- Datasource Configuration -->
+	<dataSource id="eventjpadatasource"
+		jndiName="jdbc/eventjpadatasource">
+		<jdbcDriver libraryRef="derbyJDBCLib" />
+		<properties.derby.embedded
+			databaseName="EventDB" createDatabase="create" />
+	</dataSource>
+
+	<classloader
+		apiTypeVisibility="spec, stable, ibm-api, api, third-party" />
+		
 </server>
