@@ -42,11 +42,13 @@ public class ProfileAPI {
 		return null;
 	}
 	
+// TODO:
 //	@POST
 //	public Response followUser() {
 //		
 //	}
-//	
+
+//  TODO:
 //	@DELETE
 //	public Response unfollowUser() {
 //		

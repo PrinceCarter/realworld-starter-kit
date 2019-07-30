@@ -11,9 +11,11 @@
 *.launch
 .settings/
 
+# Build
+target/
+bin/
 
 #System Files
 .DS_Store
 Thumbs.db
 
-*/target

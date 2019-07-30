@@ -66,13 +66,10 @@ public class ArticlesAPI {
 					   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
 					   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
 					   .entity((new HashMap<String, Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				put("article", articleDAO.findByID(newArticle.getID()));
-			}
-		}))
+							private static final long serialVersionUID = 1L; {
+								put("article", articleDAO.findByID(newArticle.getID()));
+							}
+						}))
 					   .build();
 	}
 
@@ -112,12 +109,9 @@ public class ArticlesAPI {
 			/**
 			 * 
 			 */
-			private static final long serialVersionUID = 1L;
-
-			{
+			private static final long serialVersionUID = 1L; {
 				put("articles", articles);
 			}
 		};
 	}
-
 }

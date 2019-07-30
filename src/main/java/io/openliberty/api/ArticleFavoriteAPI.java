@@ -48,12 +48,11 @@ public class ArticleFavoriteAPI {
 		return Response.ok(responseArticleData(article)).build();
 	}
 	
-    private HashMap<String, Object> responseArticleData(final Article articleData) {
-        return new HashMap<String, Object>() {
-			private static final long serialVersionUID = 1L;
-
-		{
-            put("article", articleData);
-        }};
-    }
+	private HashMap<String, Object> responseArticleData(final Article articleData) {
+		return new HashMap<String, Object>() {
+			private static final long serialVersionUID = 1L; {
+				put("article", articleData);
+			}
+		};
+	}
 }

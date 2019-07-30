@@ -30,10 +30,6 @@ import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-// import com.ibm.websphere.security.jwt.*;
-// import org.eclipse.microprofile.jwt;
-// import io.openliberty.features.jwtBuilder;
-
 import io.openliberty.DAO.UserDAO;
 import io.openliberty.core.user.AuthUser;
 import io.openliberty.core.user.User;
@@ -81,7 +77,7 @@ public class UsersAPI {
 					   .header("Access-Control-Allow-Origin", "*")
 					   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
 					   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
-					   .entity(userResponse(new AuthUser(newUser, getToken(newUser))))
+					  //  .entity(userResponse(new AuthUser(newUser, getToken(newUser))))
 					   .build();
 
 	}
@@ -102,73 +98,73 @@ public class UsersAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response loginUser(@Context HttpServletRequest request, @Context HttpServletResponse response,
-			String requestBody) throws Exception {
+		String requestBody) throws Exception {
 		JSONObject obj = new JSONObject(requestBody);
 		JSONObject user = obj.getJSONObject("user");
 		User loginUser = userDAO.findByEmail(user.getString("email"));
 		if (loginUser != null && user.getString("password").equals(loginUser.getPassword())) {
 
-			try {
-				request.logout();
-				request.login(loginUser.getUsername(), loginUser.getPassword());
-			} catch (ServletException e) {
-				System.out.println("Login failed.");
-				e.printStackTrace();
-			}
+			// try {
+			// 	request.logout();
+			// 	request.login(loginUser.getUsername(), loginUser.getPassword());
+			// } catch (ServletException e) {
+			// 	System.out.println("Login failed.");
+			// 	e.printStackTrace();
+			// }
 
-			// to get remote user using getRemoteUser()
-			String remoteUser = request.getRemoteUser();
+			// // to get remote user using getRemoteUser()
+			// String remoteUser = request.getRemoteUser();
 
-			System.out.println(remoteUser);
-			//Set<String> roles = getRoles(request);
+			// System.out.println(remoteUser);
+			// //Set<String> roles = getRoles(request);
 
-			// update session
-			if (remoteUser != null && remoteUser.equals(loginUser.getUsername())) {
+			// // update session
+			// if (remoteUser != null && remoteUser.equals(loginUser.getUsername())) {
 
-				String jwt = getToken(loginUser);
-				// get the current session
-				HttpSession ses = request.getSession();
-				if (ses == null) {
-					System.out.println("Session is timeout.");
-				} else {
-					ses.setAttribute("jwt", jwt);
-				}
-			} else {
-				System.out.println("Update Sessional JWT Failed.");
-			}
+			// 	String jwt = getToken(loginUser);
+			// 	// get the current session
+			// 	HttpSession ses = request.getSession();
+			// 	if (ses == null) {
+			// 		System.out.println("Session is timeout.");
+			// 	} else {
+			// 		ses.setAttribute("jwt", jwt);
+			// 	}
+			// } else {
+			// 	System.out.println("Update Sessional JWT Failed.");
+			// }
 			
 			
-			System.out.println(request.getHeader("authorization"));
+			// System.out.println(request.getHeader("authorization"));
 
 			return Response.status(Response.Status.CREATED)
 						   .header("Access-Control-Allow-Origin", "*")
 						   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
 						   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
-						   .entity(userResponse(new AuthUser(loginUser, request.getHeader("authorization")))).build();
-		} else {
-			return Response.status(Response.Status.NOT_FOUND).entity("User does not exist!")
-						   .header("Access-Control-Allow-Origin", "*")
-					       .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
-					       .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
-						   .build();
+							//  .entity(userResponse(new AuthUser(loginUser, request.getHeader("authorization"))))
+							 .build();
+		 } else {
+		return Response.status(Response.Status.NOT_FOUND).entity("User does not exist!")
+						  .header("Access-Control-Allow-Origin", "*")
+					    .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+					    .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+						  .build();
 		}
 	}
 
-	// private String getToken(User loginUser) {
-	// 	try {
-	// 		JwtBuilder jwtBuilder = JwtBuilder.create();
-	// 		jwtBuilder.subject(loginUser.getEmail()).claim(Claims.sub.toString(), loginUser.getUsername())
-	// 				.claim("upn", loginUser.getUsername()) // MP-JWT defined subject claim
-	// 				.claim("customClaim", "customValue");
-	// 		JwtToken goToken = jwtBuilder.buildJwt();
-	// 		String jwtTokenString = goToken.compact();
-	// 		return jwtTokenString;
-	// 	} catch (Exception e) {
-	// 		System.out.println("Something went wrong! " + e);
-	// 		return null;
-	// 	}
-
-	// }
+	private String getToken(User loginUser) {
+		// try {
+		// 	JwtBuilder jwtBuilder = JwtBuilder.create();
+		// 	jwtBuilder.subject(loginUser.getEmail()).claim(Claims.sub.toString(), loginUser.getUsername())
+		// 			.claim("upn", loginUser.getUsername()) // MP-JWT defined subject claim
+		// 			.claim("customClaim", "customValue");
+		// 	JwtToken goToken = jwtBuilder.buildJwt();
+		// 	String jwtTokenString = goToken.compact();
+		// 	return jwtTokenString;
+		// } catch (Exception e) {
+		// 	System.out.println("Something went wrong! " + e);
+			return null;
+		}
+	}
 
 //	private Set<String> getRoles(HttpServletRequest request) {
 //		Set<String> roles = new HashSet<String>();
@@ -183,17 +179,17 @@ public class UsersAPI {
 //		return roles;
 //	}
 
-	private Map<String, Object> userResponse(AuthUser authUser) {
-		return new HashMap<String, Object>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
+	// private Map<String, Object> userResponse(AuthUser authUser) {
+	// 	return new HashMap<String, Object>() {
+	// 		/**
+	// 		 * 
+	// 		 */
+	// 		private static final long serialVersionUID = 1L;
 
-			{
-				put("user", authUser);
-			}
-		};
-	}
+	// 		{
+	// 			put("user", authUser);
+	// 		}
+	// 	};
+	// }
 
-}
+// }

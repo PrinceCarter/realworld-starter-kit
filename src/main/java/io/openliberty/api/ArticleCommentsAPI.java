@@ -40,21 +40,21 @@ public class ArticleCommentsAPI {
 	CommentDAO commentDAO = new CommentDAO();
 	
 	@OPTIONS
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response getSimple() {
-		return Response.ok()
-			      .header("Access-Control-Allow-Origin", "*")
-			      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
-			      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization").build();
-    }
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getSimple() {
+	return Response.ok()
+					.header("Access-Control-Allow-Origin", "*")
+					.header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+					.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization").build();
+	}
 	
 	public ArticleCommentsAPI() {
 		
 	}
 	
 	@POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Transactional
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Transactional
 	public Response createComment(@PathParam("slug") String slug, @FormParam("userID") String userID, @FormParam("body") String body) {
 		
 		Article article = articleDAO.findBySlug(slug);
@@ -84,7 +84,6 @@ public class ArticleCommentsAPI {
 					   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
 					   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
 					   .build();
-			
 		}
 		
 		return Response.ok()
@@ -94,18 +93,15 @@ public class ArticleCommentsAPI {
 					   .build();
 	}
 	
+// TODO:
 //	@DELETE
 //	public Response deleteComment() {
 //		
 //	}
-//	
-//	private Article findArticle(String slug) {
-//		return articleDAO.find
-//	}
-//	
+
+// TODO:
 //	private Map<String, Object> commentResponse(Comment comment){
 //		
 //	}
-//	
-//	
+
 }
