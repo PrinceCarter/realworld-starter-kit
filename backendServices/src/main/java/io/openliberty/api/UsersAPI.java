@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import com.ibm.websphere.security.jwt.*;
 
@@ -47,6 +49,18 @@ public class UsersAPI {
 
 	@Inject
 	private UserDAO userDAO;
+	
+	@Inject
+	private JsonWebToken jwtToken;
+
+	@OPTIONS
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getSimple() {
+		return Response.ok()
+			      .header("Access-Control-Allow-Origin", "*")
+			      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+			      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization").build();
+    }
 
 	/**
 	 * This method creates a new user from the submitted data (email, username,
@@ -56,16 +70,30 @@ public class UsersAPI {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
-	public Response createNewUser(String requestBody) {
+	public Response createNewUser(@Context HttpServletRequest httpRequest, String requestBody) {
 
 		JSONObject obj = new JSONObject(requestBody);
 		JSONObject user = obj.getJSONObject("user");
 		User newUser = new User(user.getString("email"), user.getString("username"), user.getString("password"), "", "");
 		userDAO.createUser(newUser);
-		return Response.status(Response.Status.CREATED).entity(userResponse(new AuthUser(newUser, getToken(newUser))))
-				.build();
+		return Response.status(Response.Status.CREATED)
+					   .header("Access-Control-Allow-Origin", "*")
+					   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+					   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+					   .entity(userResponse(new AuthUser(newUser, getToken(newUser))))
+					   .build();
 
 	}
+	
+	@OPTIONS
+	@Path("login")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getLogin() {
+		return Response.ok()
+			      .header("Access-Control-Allow-Origin", "*")
+			      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+			      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization").build();
+    }
 
 	@POST
 	@Path("login")
@@ -107,11 +135,21 @@ public class UsersAPI {
 			} else {
 				System.out.println("Update Sessional JWT Failed.");
 			}
+			
+			
+			System.out.println(request.getHeader("authorization"));
 
 			return Response.status(Response.Status.CREATED)
-					.entity(userResponse(new AuthUser(loginUser, getToken(loginUser)))).build();
+						   .header("Access-Control-Allow-Origin", "*")
+						   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+						   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+						   .entity(userResponse(new AuthUser(loginUser, request.getHeader("authorization")))).build();
 		} else {
-			return Response.status(Response.Status.NOT_FOUND).entity("User does not exist!").build();
+			return Response.status(Response.Status.NOT_FOUND).entity("User does not exist!")
+						   .header("Access-Control-Allow-Origin", "*")
+					       .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+					       .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+						   .build();
 		}
 	}
 

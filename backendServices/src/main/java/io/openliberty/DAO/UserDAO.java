@@ -3,6 +3,7 @@ package io.openliberty.DAO;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 
 import io.openliberty.core.user.User;
@@ -14,8 +15,7 @@ import javax.enterprise.context.RequestScoped;
 public class UserDAO {
 
     @PersistenceContext(name = "jpa-unit")
-    private EntityManager em;
-    
+    private EntityManager em; 
 
     public void createUser(User user) {
         em.persist(user);

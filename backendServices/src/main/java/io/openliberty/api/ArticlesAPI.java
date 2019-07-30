@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -35,6 +36,15 @@ public class ArticlesAPI {
 
 	@Inject
 	private JsonWebToken jwtToken;
+	
+	@OPTIONS
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getSimple() {
+		return Response.ok()
+			      .header("Access-Control-Allow-Origin", "*")
+			      .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+			      .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization").build();
+    }
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -50,16 +60,20 @@ public class ArticlesAPI {
 										 JSONObject.getNames("tagList"), 
 										 user.getID().toString());
 		articleDAO.createArticle(newArticle);
-		return Response.status(Response.Status.OK).entity((new HashMap<String, Object>() {
-			/**
-			 * 
-			 */
+		System.out.println("ID: " + newArticle.getID());
+		return Response.status(Response.Status.OK)
+					   .header("Access-Control-Allow-Origin", "*")
+					   .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+					   .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+					   .entity((new HashMap<String, Object>() {
+
 			private static final long serialVersionUID = 1L;
 
 			{
 				put("article", articleDAO.findByID(newArticle.getID()));
 			}
-		})).build();
+		}))
+					   .build();
 	}
 
 	@GET
@@ -71,7 +85,11 @@ public class ArticlesAPI {
 		User user = userDAO.findByUsername(jwtToken.getName());
 		System.out.println(user);
 //		return Response.ok().build();
-		return Response.ok(articleResponse(articleDAO.findUserFeed(user))).build();
+		return Response.ok(articleResponse(articleDAO.findUserFeed(user)))
+				       .header("Access-Control-Allow-Origin", "*")
+				       .header("Access-Control-Allow-Methods", "POST, GET, PUT, UPDATE, OPTIONS")
+				       .header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+					   .build();
 	}
 
 	// Set to QueryParams
@@ -80,11 +98,11 @@ public class ArticlesAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response getArticles(String requestBody) {
-//		
-//		JSONObject obj = new JSONObject(requestBody);
-////		JSONObject user = obj.getJSONObject("user");
-//		
-//		System.out.println(obj);
+		
+		JSONObject obj = new JSONObject(requestBody);
+		JSONObject user = obj.getJSONObject("user");
+		
+		System.out.println(obj);
 
 		return Response.status(Response.Status.OK).entity(requestBody).build();
 	}

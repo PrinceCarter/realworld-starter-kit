@@ -14,6 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Comments")
 @NamedQuery(name = "Comments.findByID", query = "SELECT c FROM Comment c WHERE c.commentID = :commentID")
+@NamedQuery(name = "Comments.findByArticleID", query = "SELECT c FROM Comment c WHERE c.articleID = :articleID")
 public class Comment {
 	
     @GeneratedValue(strategy = GenerationType.AUTO)

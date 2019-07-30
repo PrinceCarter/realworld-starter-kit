@@ -176,9 +176,9 @@
                 <packageFile>${package.file}</packageFile>
                 <include>${packaging.type}</include>
                 <bootstrapProperties>
-                  <default.http.port>${backend.service.http.port}</default.http.port>
-                  <default.https.port>${backend.service.https.port}</default.https.port>
-                  <frontend.port>${frontend.service.http.port}</frontend.port>
+                  <default.http.port>5050</default.http.port>
+                  <default.https.port>5051</default.https.port>
+                  <frontend.port>4100</frontend.port>
                 </bootstrapProperties>
               </configuration>
               <executions>
